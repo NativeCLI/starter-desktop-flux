@@ -39,13 +39,15 @@ jobs:
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: 'main'
 
       - name: Create release
+        if: steps.commit.outputs.committed == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: '1.0.${{ github.run_number }}'
-          release_name: 'Release ${{ github.run_number }}'
+          release_name: '1.0.${{ github.run_number }}'
           draft: false
           prerelease: false
