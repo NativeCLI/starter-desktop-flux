@@ -29,6 +29,7 @@ jobs:
         run: composer update --no-progress --no-suggest --prefer-dist
 
       - name: Commit changes
+        id: commit
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
