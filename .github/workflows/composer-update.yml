@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          ref: main
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -28,27 +30,58 @@ jobs:
       - name: Run Composer update
         run: composer update --no-progress --no-suggest --prefer-dist
 
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git add composer.lock
+          if git diff-index --quiet HEAD; then
+            echo "No changes to commit."
+            echo "::set-output name=changes::false"
+          else
+            echo "::set-output name=changes::true"
+          fi
+
       - name: Commit changes
-        id: commit
+        if: steps.check_changes.outputs.changes == 'true'
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add composer.lock
           git commit -m 'Update Composer dependencies'
 
       - name: Push changes
+        if: steps.check_changes.outputs.changes == 'true'
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: 'main'
 
+      - name: Get latest release tag
+        id: get_latest_release
+        run: |
+          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "Latest tag: $latest_tag"
+          echo "::set-output name=latest_tag::$latest_tag"
+
+      - name: Calculate new version
+        id: calculate_version
+        run: |
+          latest_tag=${{ steps.get_latest_release.outputs.latest_tag }}
+          IFS='.' read -r -a version_parts <<< "$latest_tag"
+          major=${version_parts[0]}
+          minor=${version_parts[1]}
+          patch=${version_parts[2]}
+          new_patch=$((patch + 1))
+          new_version="$major.$minor.$new_patch"
+          echo "New version: $new_version"
+          echo "::set-output name=new_version::$new_version"
+
       - name: Create release
-        if: steps.commit.outputs.committed == 'true'
+        if: steps.check_changes.outputs.changes == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: '1.0.${{ github.run_number }}'
-          release_name: '1.0.${{ github.run_number }}'
+          tag_name: ${{ steps.calculate_version.outputs.new_version }}
+          release_name: ${{ steps.calculate_version.outputs.new_version }}
           draft: false
           prerelease: false
