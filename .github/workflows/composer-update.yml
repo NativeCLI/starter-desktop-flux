@@ -1,0 +1,46 @@
+name: Composer Update
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  composer-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist
+
+      - name: Run Composer update
+        run: composer update --no-progress --no-suggest --prefer-dist
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add composer.lock
+          git commit -m 'Update Composer dependencies'
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: '1.0.${{ github.run_number }}'
+          release_name: 'Release ${{ github.run_number }}'
+          draft: false
+          prerelease: false
