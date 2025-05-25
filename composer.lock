@@ -1056,16 +1056,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.14.1",
+            "version": "v12.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "84b142958d1638a7e89de94ce75c2821c601d3d7"
+                "reference": "2ef7fb183f18e547af4eb9f5a55b2ac1011f0b77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/84b142958d1638a7e89de94ce75c2821c601d3d7",
-                "reference": "84b142958d1638a7e89de94ce75c2821c601d3d7",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/2ef7fb183f18e547af4eb9f5a55b2ac1011f0b77",
+                "reference": "2ef7fb183f18e547af4eb9f5a55b2ac1011f0b77",
                 "shasum": ""
             },
             "require": {
@@ -1267,7 +1267,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-05-13T17:50:51+00:00"
+            "time": "2025-05-20T15:10:44+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -2250,16 +2250,16 @@
         },
         {
             "name": "nativephp/electron",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NativePHP/electron.git",
-                "reference": "e0624eba8d2994669a90180125a7c0bd8631c51a"
+                "reference": "82a8a51e0aa80d0962ee5e04b36b3b2c0ba8701a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NativePHP/electron/zipball/e0624eba8d2994669a90180125a7c0bd8631c51a",
-                "reference": "e0624eba8d2994669a90180125a7c0bd8631c51a",
+                "url": "https://api.github.com/repos/NativePHP/electron/zipball/82a8a51e0aa80d0962ee5e04b36b3b2c0ba8701a",
+                "reference": "82a8a51e0aa80d0962ee5e04b36b3b2c0ba8701a",
                 "shasum": ""
             },
             "require": {
@@ -2325,7 +2325,7 @@
                 "nativephp"
             ],
             "support": {
-                "source": "https://github.com/NativePHP/electron/tree/1.0.0"
+                "source": "https://github.com/NativePHP/electron/tree/1.1.0"
             },
             "funding": [
                 {
@@ -2337,20 +2337,20 @@
                     "type": "opencollective"
                 }
             ],
-            "time": "2025-04-07T14:55:46+00:00"
+            "time": "2025-05-23T13:26:45+00:00"
         },
         {
             "name": "nativephp/laravel",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NativePHP/laravel.git",
-                "reference": "9e9166d698e55e1877ba1726ba7d25999c85065f"
+                "reference": "6fe208cc271b0a5cae052b05a6970652a1de0872"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NativePHP/laravel/zipball/9e9166d698e55e1877ba1726ba7d25999c85065f",
-                "reference": "9e9166d698e55e1877ba1726ba7d25999c85065f",
+                "url": "https://api.github.com/repos/NativePHP/laravel/zipball/6fe208cc271b0a5cae052b05a6970652a1de0872",
+                "reference": "6fe208cc271b0a5cae052b05a6970652a1de0872",
                 "shasum": ""
             },
             "require": {
@@ -2377,7 +2377,6 @@
             "extra": {
                 "laravel": {
                     "aliases": {
-                        "App": "Native\\Laravel\\Facades\\App",
                         "Dock": "Native\\Laravel\\Facades\\Dock",
                         "Menu": "Native\\Laravel\\Facades\\Menu",
                         "Shell": "Native\\Laravel\\Facades\\Shell",
@@ -2430,7 +2429,7 @@
             ],
             "support": {
                 "issues": "https://github.com/NativePHP/laravel/issues",
-                "source": "https://github.com/NativePHP/laravel/tree/1.0.0"
+                "source": "https://github.com/NativePHP/laravel/tree/1.1.0"
             },
             "funding": [
                 {
@@ -2442,20 +2441,20 @@
                     "type": "opencollective"
                 }
             ],
-            "time": "2025-04-07T14:52:57+00:00"
+            "time": "2025-05-22T12:43:16+00:00"
         },
         {
             "name": "nativephp/php-bin",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NativePHP/php-bin.git",
-                "reference": "3f1a2b2fa3f38a79c65efda0e57ddbc9a3427071"
+                "reference": "a888cffa82b5c24c578fa73e7895d2210c502563"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NativePHP/php-bin/zipball/3f1a2b2fa3f38a79c65efda0e57ddbc9a3427071",
-                "reference": "3f1a2b2fa3f38a79c65efda0e57ddbc9a3427071",
+                "url": "https://api.github.com/repos/NativePHP/php-bin/zipball/a888cffa82b5c24c578fa73e7895d2210c502563",
+                "reference": "a888cffa82b5c24c578fa73e7895d2210c502563",
                 "shasum": ""
             },
             "type": "library",
@@ -2485,7 +2484,7 @@
                 "php"
             ],
             "support": {
-                "source": "https://github.com/NativePHP/php-bin/tree/1.0.1"
+                "source": "https://github.com/NativePHP/php-bin/tree/1.0.2"
             },
             "funding": [
                 {
@@ -2497,7 +2496,7 @@
                     "type": "opencollective"
                 }
             ],
-            "time": "2025-04-14T08:58:54+00:00"
+            "time": "2025-05-23T13:32:30+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -7382,16 +7381,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.20",
+            "version": "11.5.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e6bdea63ecb7a8287d2cdab25bdde3126e0cfe6f"
+                "reference": "d565e2cdc21a7db9dc6c399c1fc2083b8010f289"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e6bdea63ecb7a8287d2cdab25bdde3126e0cfe6f",
-                "reference": "e6bdea63ecb7a8287d2cdab25bdde3126e0cfe6f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d565e2cdc21a7db9dc6c399c1fc2083b8010f289",
+                "reference": "d565e2cdc21a7db9dc6c399c1fc2083b8010f289",
                 "shasum": ""
             },
             "require": {
@@ -7414,7 +7413,7 @@
                 "sebastian/code-unit": "^3.0.3",
                 "sebastian/comparator": "^6.3.1",
                 "sebastian/diff": "^6.0.2",
-                "sebastian/environment": "^7.2.0",
+                "sebastian/environment": "^7.2.1",
                 "sebastian/exporter": "^6.3.0",
                 "sebastian/global-state": "^7.0.2",
                 "sebastian/object-enumerator": "^6.0.1",
@@ -7463,7 +7462,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.20"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.21"
             },
             "funding": [
                 {
@@ -7487,7 +7486,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-05-11T06:39:52+00:00"
+            "time": "2025-05-21T12:35:00+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -7866,23 +7865,23 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "7.2.0",
+            "version": "7.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "855f3ae0ab316bbafe1ba4e16e9f3c078d24a0c5"
+                "reference": "a5c75038693ad2e8d4b6c15ba2403532647830c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/855f3ae0ab316bbafe1ba4e16e9f3c078d24a0c5",
-                "reference": "855f3ae0ab316bbafe1ba4e16e9f3c078d24a0c5",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/a5c75038693ad2e8d4b6c15ba2403532647830c4",
+                "reference": "a5c75038693ad2e8d4b6c15ba2403532647830c4",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.2"
             },
             "require-dev": {
-                "phpunit/phpunit": "^11.0"
+                "phpunit/phpunit": "^11.3"
             },
             "suggest": {
                 "ext-posix": "*"
@@ -7918,15 +7917,27 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/environment/issues",
                 "security": "https://github.com/sebastianbergmann/environment/security/policy",
-                "source": "https://github.com/sebastianbergmann/environment/tree/7.2.0"
+                "source": "https://github.com/sebastianbergmann/environment/tree/7.2.1"
             },
             "funding": [
                 {
                     "url": "https://github.com/sebastianbergmann",
                     "type": "github"
+                },
+                {
+                    "url": "https://liberapay.com/sebastianbergmann",
+                    "type": "liberapay"
+                },
+                {
+                    "url": "https://thanks.dev/u/gh/sebastianbergmann",
+                    "type": "thanks_dev"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/sebastian/environment",
+                    "type": "tidelift"
                 }
             ],
-            "time": "2024-07-03T04:54:44+00:00"
+            "time": "2025-05-21T11:55:47+00:00"
         },
         {
             "name": "sebastian/exporter",
