@@ -223,8 +223,8 @@ jobs:
         run: |
           cd test-app
 
-          # Check if Flux is installed
-          if ! php artisan package:discover | grep -q "livewire/flux"; then
+          # Check if Flux is installed using composer show
+          if ! composer show livewire/flux > /dev/null 2>&1; then
             echo "❌ Livewire Flux not properly installed"
             exit 1
           fi
