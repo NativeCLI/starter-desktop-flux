@@ -180,7 +180,11 @@ jobs:
           # Kill Vite
           kill $VITE_PID || true
 
-          # Exit codes: 124 = timeout (expected), 0 = success, anything else = error
+          # Exit codes:
+          #   0   = success
+          #   124 = timeout (from `timeout` command, expected)
+          #   143 = SIGTERM (process killed, e.g. by timeout)
+          #   anything else = error
           if [ "${EXIT_CODE:-0}" != "124" ] && [ "${EXIT_CODE:-0}" != "0" ] && [ "${EXIT_CODE:-0}" != "143" ]; then
             echo "❌ native:run failed with exit code ${EXIT_CODE:-0}"
             exit 1
