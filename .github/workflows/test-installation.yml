@@ -170,7 +170,12 @@ jobs:
 
           # Try to run native:run with xvfb and timeout after 30 seconds
           # We just want to verify it starts without immediate errors
-          timeout 30s xvfb-run --auto-servernum php artisan native:run --no-interaction || EXIT_CODE=$?
+          if command -v timeout >/dev/null 2>&1; then
+            timeout 30s xvfb-run --auto-servernum php artisan native:run --no-interaction || EXIT_CODE=$?
+          else
+            echo "⚠️ 'timeout' command not found; running without timeout"
+            xvfb-run --auto-servernum php artisan native:run --no-interaction || EXIT_CODE=$?
+          fi
 
           # Kill Vite
           kill $VITE_PID || true
