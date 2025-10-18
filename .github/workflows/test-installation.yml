@@ -1,0 +1,250 @@
+name: Test Installation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-installation:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        php: ['8.3', '8.4']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: starter-kit
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
+          coverage: none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Laravel Installer
+        run: composer global require laravel/installer
+
+      - name: Add Composer global bin to PATH
+        run: echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+
+      - name: Create test project from current branch
+        run: |
+          # Copy the starter kit to a test directory (simulating a fresh install)
+          cp -r starter-kit test-app
+          cd test-app
+
+          # Remove git directory to simulate a fresh project
+          rm -rf .git
+
+      - name: Install Composer dependencies
+        run: |
+          cd test-app
+          composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Run post-install setup
+        run: |
+          cd test-app
+
+          # Copy .env.example to .env if it doesn't exist
+          if [ ! -f .env ]; then
+            cp .env.example .env
+          fi
+
+          # Generate application key
+          php artisan key:generate --ansi
+
+          # Create SQLite database
+          touch database/database.sqlite
+
+          # Run migrations
+          php artisan migrate --graceful --ansi
+
+      - name: Install NPM dependencies
+        run: |
+          cd test-app
+          npm install
+
+      - name: Build assets
+        run: |
+          cd test-app
+          npm run build
+
+      - name: Check for asset compilation errors
+        run: |
+          cd test-app
+          if [ ! -f "public/build/manifest.json" ]; then
+            echo "❌ Asset manifest not found - build may have failed"
+            exit 1
+          fi
+          echo "✅ Assets compiled successfully"
+
+      - name: Test Laravel server and asset loading
+        run: |
+          cd test-app
+
+          # Start Laravel development server in background
+          php artisan serve --host=127.0.0.1 --port=8000 &
+          SERVER_PID=$!
+
+          # Wait for server to start
+          sleep 5
+
+          # Test if homepage loads without 500 errors
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000)
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Homepage returned HTTP $HTTP_CODE (expected 200)"
+            kill $SERVER_PID
+            exit 1
+          fi
+
+          # Check if Livewire assets are accessible (testing for the issue in #6)
+          LIVEWIRE_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/livewire/livewire.js)
+          if [ "$LIVEWIRE_CODE" == "500" ]; then
+            echo "❌ Livewire assets returning 500 error (Issue #6)"
+            kill $SERVER_PID
+            exit 1
+          fi
+
+          echo "✅ Server responds correctly (HTTP $HTTP_CODE)"
+          echo "✅ Livewire assets accessible (HTTP $LIVEWIRE_CODE)"
+
+          # Stop server
+          kill $SERVER_PID
+
+      - name: Test native:dev command configuration
+        run: |
+          cd test-app
+
+          # Check if native configuration exists
+          if [ ! -f "config/nativephp.php" ]; then
+            echo "❌ NativePHP config not found"
+            exit 1
+          fi
+
+          # Verify the native:run command is registered
+          if ! php artisan list | grep -q "native:run"; then
+            echo "❌ native:run command not available"
+            exit 1
+          fi
+
+          # Check if NativeAppServiceProvider exists
+          if [ ! -f "app/Providers/NativeAppServiceProvider.php" ]; then
+            echo "❌ NativeAppServiceProvider not found"
+            exit 1
+          fi
+
+          echo "✅ NativePHP configuration exists"
+          echo "✅ native:run command available"
+
+      - name: Install Xvfb (Ubuntu only)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgtk-3-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2
+
+      - name: Test native:run command (Ubuntu only)
+        if: matrix.os == 'ubuntu-latest'
+        timeout-minutes: 2
+        run: |
+          cd test-app
+
+          # Start Vite dev server in background
+          npm run dev &
+          VITE_PID=$!
+
+          # Wait for Vite to start
+          sleep 10
+
+          # Try to run native:run with xvfb and timeout after 30 seconds
+          # We just want to verify it starts without immediate errors
+          if command -v timeout >/dev/null 2>&1; then
+            timeout 30s xvfb-run --auto-servernum php artisan native:run --no-interaction || EXIT_CODE=$?
+          else
+            echo "⚠️ 'timeout' command not found; running without timeout"
+            xvfb-run --auto-servernum php artisan native:run --no-interaction || EXIT_CODE=$?
+          fi
+
+          # Kill Vite
+          kill $VITE_PID || true
+
+          # Exit codes:
+          #   0   = success
+          #   124 = timeout (from `timeout` command, expected)
+          #   143 = SIGTERM (process killed, e.g. by timeout)
+          #   anything else = error
+          if [ "${EXIT_CODE:-0}" != "124" ] && [ "${EXIT_CODE:-0}" != "0" ] && [ "${EXIT_CODE:-0}" != "143" ]; then
+            echo "❌ native:run failed with exit code ${EXIT_CODE:-0}"
+            exit 1
+          fi
+
+          echo "✅ native:run command executed without immediate errors"
+
+      - name: Run PHPUnit tests
+        run: |
+          cd test-app
+          php artisan test
+
+      - name: Check for critical files
+        run: |
+          cd test-app
+
+          # Check for required files
+          files=(
+            "composer.json"
+            "package.json"
+            "vite.config.js"
+            "config/nativephp.php"
+            "app/Providers/NativeAppServiceProvider.php"
+          )
+
+          for file in "${files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Required file not found: $file"
+              exit 1
+            fi
+          done
+
+          echo "✅ All required files present"
+
+      - name: Verify Livewire Flux installation
+        run: |
+          cd test-app
+
+          # Check if Flux is installed using composer show
+          if ! composer show livewire/flux > /dev/null 2>&1; then
+            echo "❌ Livewire Flux not properly installed"
+            exit 1
+          fi
+
+          echo "✅ Livewire Flux installed correctly"
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ matrix.os }}-php${{ matrix.php }}
+          path: |
+            test-app/storage/logs/
+          retention-days: 5
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "## Test Summary"
+          echo "OS: ${{ matrix.os }}"
+          echo "PHP: ${{ matrix.php }}"
+          echo ""
+          echo "All installation tests completed!"

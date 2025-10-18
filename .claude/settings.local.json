@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh issue view 3 --json title,body,number)",
+      "WebFetch(domain:github.com)",
+      "Bash(curl -s https://api.github.com/repos/NativeCLI/starter-desktop-flux/issues/6)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
