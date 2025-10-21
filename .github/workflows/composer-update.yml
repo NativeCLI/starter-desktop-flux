@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: main
 
@@ -25,10 +25,10 @@ jobs:
           php-version: '8.3'
 
       - name: Install Composer dependencies
-        run: composer install --no-progress --no-suggest --prefer-dist
+        run: composer install --no-progress --prefer-dist
 
       - name: Run Composer update
-        run: composer update --no-progress --no-suggest --prefer-dist
+        run: composer update --no-progress --prefer-dist
 
       - name: Check for changes
         id: check_changes
@@ -36,9 +36,9 @@ jobs:
           git add composer.lock
           if git diff-index --quiet HEAD; then
             echo "No changes to commit."
-            echo "::set-output name=changes::false"
+            echo "changes=false" >> "$GITHUB_OUTPUT"
           else
-            echo "::set-output name=changes::true"
+            echo "changes=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Commit changes
@@ -50,38 +50,35 @@ jobs:
 
       - name: Push changes
         if: steps.check_changes.outputs.changes == 'true'
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: 'main'
+        run: |
+          git push origin main
 
       - name: Get latest release tag
         id: get_latest_release
         run: |
-          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "0.0.0")
           echo "Latest tag: $latest_tag"
-          echo "::set-output name=latest_tag::$latest_tag"
+          echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
 
       - name: Calculate new version
         id: calculate_version
         run: |
           latest_tag=${{ steps.get_latest_release.outputs.latest_tag }}
-          IFS='.' read -r -a version_parts <<< "$latest_tag"
-          major=${version_parts[0]}
-          minor=${version_parts[1]}
-          patch=${version_parts[2]}
+          IFS='.' read -r -a version_parts <<< "${latest_tag#v}"
+          major=${version_parts[0]:-0}
+          minor=${version_parts[1]:-0}
+          patch=${version_parts[2]:-0}
           new_patch=$((patch + 1))
           new_version="$major.$minor.$new_patch"
           echo "New version: $new_version"
-          echo "::set-output name=new_version::$new_version"
+          echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
 
       - name: Create release
         if: steps.check_changes.outputs.changes == 'true'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.calculate_version.outputs.new_version }}
-          release_name: ${{ steps.calculate_version.outputs.new_version }}
+          name: ${{ steps.calculate_version.outputs.new_version }}
           draft: false
           prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}

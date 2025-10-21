@@ -1,0 +1,23 @@
+--- a/src/Events/LivewireDispatcher.php
++++ b/src/Events/LivewireDispatcher.php
+@@ -20,7 +20,7 @@
+     {
+         $identifier = 'NativePHP Livewire Dispatcher';
+         $html = $handled->response->getContent();
+-        $originalContent = $handled->response->original;
++        $originalContent = property_exists($handled->response, 'original') ? $handled->response->original : null;
+ 
+         if (! $handled->response->isSuccessful()) {
+             return;
+@@ -50,7 +50,10 @@
+             HTML)
+         );
+ 
+-        $handled->response->original = $originalContent;
++        // Only restore original if the response object supports it
++        if (property_exists($handled->response, 'original')) {
++            $handled->response->original = $originalContent;
++        }
+     }
+ 
+     /** Injects assets into given html string (taken from Livewire's injection mechanism) */
